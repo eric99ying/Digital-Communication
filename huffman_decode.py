@@ -31,7 +31,7 @@ def create_freq_dict(freq_file):
 		line = in_file.readline()
 		while line:
 			# Check that line contains ascii char and frequency
-			ascii_char = re.search("^(.) ", line).groups()[0]
+			ascii_char = int((re.search("^(\d+) ", line).groups()[0]))
 			ascii_freq = float(re.search("  ([\d.]+)", line).groups()[0])
 			freq_dict[ascii_char] = ascii_freq
 
@@ -78,12 +78,12 @@ def create_huffman_tree(freq_dict):
 	# (1) Create huffnode_dict which stores mapping between labels(ascii char) and HuffNode
 	huffnode_dict = {}
 	for key,value in freq_dict.items():
-		huffnode_dict[key] = HuffNode(key, value)
+		huffnode_dict[str(key)] = HuffNode(int(key), float(value))
 	#print(huffnode_dict)
 	sorted_items = sorted(freq_dict.items(), key=operator.itemgetter(1))
 	
 	# (2) Create a heap storing (weight, HuffNode)
-	heap_elts = [(i[1], i[0]) for i in sorted_items]
+	heap_elts = [(float(i[1]), str(i[0])) for i in sorted_items]
 	heapq.heapify(heap_elts)
 	num_supernodes = 0
 	while(len(heap_elts)) > 1:
@@ -92,11 +92,11 @@ def create_huffman_tree(freq_dict):
 		min2 = heapq.heappop(heap_elts)
 		min1 = huffnode_dict[min1[1]]
 		min2 = huffnode_dict[min2[1]]
-		freq_sum = min1.freq + min2.freq
+		freq_sum = float(min1.freq + min2.freq)
 		super_label = "super " + str(num_supernodes)
 		supernode = HuffNode(super_label, freq_sum, min1, min2)
 		huffnode_dict[super_label] = supernode
-		heapq.heappush(heap_elts, (freq_sum, super_label))
+		heapq.heappush(heap_elts, (float(freq_sum), super_label))
 		num_supernodes += 1
 
 	# (4) Return the supernode, which corresponds to the root node of Huffman tree
@@ -114,7 +114,7 @@ def decode(input_file, output_file, huffman_tree):
 		None
 
 	'''
-	with open(dir_path + input_file, "r") as in_file, open(dir_path + output_file, "w") as out_file:
+	with open(dir_path + input_file, "r", encoding="utf-8") as in_file, open(dir_path + output_file, "w") as out_file:
 		tracker = huffman_tree
 		bin_str = in_file.read()
 		output_str = ""
@@ -127,7 +127,7 @@ def decode(input_file, output_file, huffman_tree):
 				raise Exception("Invalid bit found in binary file.")
 			if tracker.isLeaf():
 				#print("found:", tracker.label)
-				output_str += tracker.label
+				output_str += chr(int(tracker.label))
 				tracker = huffman_tree
 		out_file.write(output_str)
 
@@ -147,6 +147,6 @@ def devert(bin_file, output_file, freq_file):
 
 
 if __name__ == "__main__":
-	devert("encoded/EncodeFile1.txt", "decoded/DecodeFile1.txt", "ascii_frequency.txt")
+	devert("encoded/EncodeFile4.txt", "decoded/DecodeFile4.txt", "frequency_table_2.txt")
 
 
