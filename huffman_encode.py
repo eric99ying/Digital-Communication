@@ -53,7 +53,7 @@ def create_huffman_dictionary(freq_dict):
 	while (len(pq) >= 2):
 		tuple_1 = heapq.heappop(pq)
 		tuple_2 = heapq.heappop(pq)
-		combined_tuple = (1 - ((1 - tuple_1[0])*(1 - tuple_2[0])), tuple_1[1] + tuple_2[1])
+		combined_tuple = (tuple_1[0] + tuple_2[0], tuple_1[1] + tuple_2[1])
 		for k in tuple_2[1]:
 			huff_dict[k] = "1" + huff_dict[k]
 		for k in tuple_1[1]:
@@ -89,14 +89,14 @@ def convert(text_file, output_file, freq_file):
 	'''
 	Takes text_file, huffman encodes it according to the frequency in freq_file, and writes to output_file.
 	'''
-
 	freq_dict = create_freq_dict(freq_file)
 	huffman_dict = create_huffman_dictionary(freq_dict)
 	huffman_encode(text_file, output_file, huffman_dict)
 
-	print("Phase !: Encoding Success")
+	print("Phase 1: Encoding Success")
+	print("__________________________")
 
 if __name__ == "__main__":
 
-	convert("tests/TextFile1.txt", "debug/EncodeFile1.txt", "ascii_frequency.txt")
+	convert("tests/TextFile1.txt", "encoded/EncodeFile1.txt", "ascii_frequency.txt")
 
