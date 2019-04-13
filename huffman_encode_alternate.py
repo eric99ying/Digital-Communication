@@ -1,39 +1,43 @@
 '''
-huffman_encode.py
+huffman_encode_2.py
 ~~~
 Takes in a text file and encodes it into 1's and 0's using Huffman Encoding. 
 '''
 import os
 import heapq
 import re
-import math
 import binascii
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
-def create_freq_dict(freq_file):
+def convert_ascii_bin(ascii_str):
 	'''
-	Takes in a file containing frequencies of ascii characters and frequency values, and creates a 
-	dictionary from it.
+	Converts an ascii string to binary.
+	'''
+	output_str = ""
+	for c in ascii_str:
+		output_str += bin(ord(c))[2:]
+	return output_str
+
+
+def create_freq_dict(input_file):
+	'''
+	Takes in input file and creates huffman dictionary from it.
 
 	Args:
-		freq_file (str): The file of frequencies. Found from:
-			https://reusablesec.blogspot.com/2009/05/character-frequency-analysis-info.html
+		input_file (str): The file of text.
 	Returns:
 		dict: The dictionary of ascii characters and frequency values
 
 	'''
 	freq_dict = {}
-	with open(dir_path + freq_file, "r") as in_file:
-		line = in_file.readline()
-		while line:
-			# Check that line contains ascii char and frequency
-			ascii_char = int((re.search("^(\d+) ", line).groups()[0]))
-			ascii_freq = float(re.search("  ([\d.]+)", line).groups()[0])
-			freq_dict[ascii_char] = ascii_freq
-
-			line = in_file.readline()
-
+	with open(dir_path + input_file, "r") as in_file:
+		text = in_file.read()
+		bin_str = convert_ascii_bin(text)
+		i = 0
+		while:
+			
+			i += 16
 	return freq_dict
 
 def create_huffman_dictionary(freq_dict):
@@ -76,17 +80,14 @@ def huffman_encode(text_file, output_file, huffman_dict):
 		None
 
 	'''
-	with open(dir_path + text_file, "r", encoding="utf-8-sig") as in_file, open(dir_path + output_file, "w") as out_file:
+	with open(dir_path + text_file, "r") as in_file, open(dir_path + output_file, "w") as out_file:
 		text_string = in_file.read()
 		output_str = ""
 		for c in text_string:
-			output_str += huffman_dict[ord(c)]
+			output_str += huffman_dict[c]
 
 		out_file.write(output_str)
 
-
-	print("Length of original text: ", len(text_string)*8)
-	print("Length of encoded text: ", len(output_str))
 	print("Encoded text file written to ", output_file)
 
 
@@ -95,18 +96,15 @@ def convert(text_file, output_file, freq_file):
 	Takes text_file, huffman encodes it according to the frequency in freq_file, and writes to output_file.
 	'''
 	freq_dict = create_freq_dict(freq_file)
-	print(freq_dict)
 	huffman_dict = create_huffman_dictionary(freq_dict)
-	print(huffman_dict)
 	huffman_encode(text_file, output_file, huffman_dict)
 
-	total_sum = sum([f for f in freq_dict.values()])
-	entropy = -sum([(f/total_sum)*math.log(f/total_sum) for f in freq_dict.values()])
-	print("Entropy: ", entropy)
 	print("Phase 1: Encoding Success")
 	print("__________________________")
 
 if __name__ == "__main__":
 
-	convert("tests/test3.txt", "encoded/EncodeFile4.txt", "frequency_table_2.txt")
+	print(convert_ascii_bin("adfosfisodf"))
+
+	#convert("tests/TextFile1.txt", "encoded/EncodeFile1.txt", "ascii_frequency.txt")
 
