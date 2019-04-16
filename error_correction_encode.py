@@ -8,7 +8,12 @@ from berlekamp-welsh import welshberlekamp as wb
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
-p = 16
+#number of unique sounds
+#p corresponds to the closest prime number greater than num_sounds
+num_sounds = 16
+n = 16
+k = 12
+p = 17
 
 def split_message(input_file, k):
 	'''
@@ -17,7 +22,8 @@ def split_message(input_file, k):
 	Args:
 		input_file (str): The name of input file.
 		k (int): The number of bits to split by.
-	Return
+	Return:
+		list: The grouped bits in a list.
 	'''
 	bits = []
 	track = 0
@@ -36,8 +42,28 @@ def split_message(input_file, k):
 			track = track*2
 			num_bits_sofar += 1
 		bits.append(track)
+	return bits
 
+
+def encode(bits, n, k, p):
+	'''
+	Takes list of grouped bits and encode using B-W algorithm.
 	
+	Args:
+		bits(list): The list of bits.
+		n: The number of packets sent
+		k: The actual degree of the polynomial you want to encode
+		p: Modulo
+			k < n < p
+	Returns:
+
+	'''
+	encoder, decoder, s = wb.makeEncoderDecoder(n, k, p)
+	bw_encoded_message = []
+	while i < len(bits):
+		chunk = [bits[j] for j in range(i, i+k)]
+		i += k
+		bw_encoded_message.append([encoder(chunk)])
+	return bw_encoded_message
 
 
-wb.makeEncoderDecoder()

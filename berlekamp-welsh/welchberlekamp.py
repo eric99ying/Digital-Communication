@@ -7,6 +7,18 @@ from linearsolver.linearsolver import someSolution
 from finitefield.finitefield import FiniteField
 from finitefield.polynomial import polynomialsOver
 
+# Given d x and y points, Lagrange interpolates the unique degree d-1 polynomial
+def langrange_poly(x):
+   def interpolate(x_values, y_values):
+       def _basis(j):
+           p = [(x - x_values[m])/(x_values[j] - x_values[m]) for m in xrange(k + 1) if m != j]
+           return reduce(operator.mul, p)
+
+       assert len(x_values) != 0 and (len(x_values) == len(y_values)), 'x and y cannot be empty and must have the same length'
+
+       k = len(x_values)
+       return sum(_basis(j) for j in xrange(k))
+
 
 def makeEncoderDecoder(n, k, p):
    if not k <= n <= p:
