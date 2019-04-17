@@ -37,6 +37,8 @@ def create_freq_dict(freq_file):
 
 			line = in_file.readline()
 
+	freq_dict[126] = 1.    # ~ corresonds to characters that do not exist in frequency table
+
 	return freq_dict
 
 class HuffNode:
@@ -142,11 +144,13 @@ def devert(bin_file, output_file, freq_file):
 
 	decode(bin_file, output_file, huffman_tree)
 
-	print("Phase 2: Decoding Success")
+	print("Huffman Decoding Success")
 	print("__________________________")
 
 
 if __name__ == "__main__":
-	devert("encoded/EncodeFile4.txt", "decoded/DecodeFile4.txt", "frequency_table_2.txt")
+	#devert("encoded/EncodeFile4.txt", "decoded/DecodeFile4.txt", "frequency_table_2.txt")
+	devert("error_decoded/ErrorDecodeFile4.txt", "decoded/DecodeFile4.txt", "frequency_table_2.txt")
+
 
 

@@ -1,11 +1,19 @@
 # an encoder and decoder for Reed-Solomon codes with coefficients in Z/p for a prime p
 # decoder uses the Berlekamp-Welch algorithm
 
+import os
+import sys
+
+dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
+sys.path.append(dir_path)
+
 # for solving a linear system
 from linearsolver.linearsolver import someSolution
-
 from finitefield.finitefield import FiniteField
 from finitefield.polynomial import polynomialsOver
+
+
+
 
 # Given d x and y points, Lagrange interpolates the unique degree d-1 polynomial
 def langrange_poly(x):

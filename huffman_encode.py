@@ -107,7 +107,7 @@ def convert(text_file, output_file, freq_file):
 	total_sum = sum([f for f in freq_dict.values()])
 	entropy = -sum([(f/total_sum)*math.log(f/total_sum) for f in freq_dict.values()])
 	print("Entropy: ", entropy)
-	print("Phase 1: Encoding Success")
+	print("Huffman Encoding Success")
 	print("__________________________")
 
 if __name__ == "__main__":

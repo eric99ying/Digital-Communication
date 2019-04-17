@@ -1,53 +1,72 @@
 '''
 error_correction.py
 ~~~
-Corrects errors in tranmission of bits through Reed Soloman and Berlekemp-Welsh.
+Corrects errors in tranmission of bits through Reed Soloman and Berlekemp-Welsh. This file takes in 
+the huffman encoded binary file. It groups the bits in the binary file together, then treats each "packet" 
+as a coefficient of polynomial. We encode ever K packets into a polynomial, and transmit N points over. P is
+the modulo space we work in, and thus must be larger than N or K. 
+
+Pipeline
+
+huffman_encode -> error_correction_encode -> transmission -> receive -> error_correction_decode -> huffman_decode
 '''
 
-from berlekamp-welsh import welshberlekamp as wb
+from berlekamp_welsh import welchberlekamp as wb
+import os
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 #number of unique sounds
 #p corresponds to the closest prime number greater than num_sounds
-num_sounds = 16
-n = 16
-k = 12
-p = 17
+NUM_SOUNDS = 16
+N = 16
+K = 12
+P = 97
 
-def split_message(input_file, k):
+def split_message(input_file, m):
 	'''
-	Takes in an input file consisting of binary bits and splits it into groups of k bits.
+	Takes in an input file consisting of binary bits and splits it into groups of m bits.
 
 	Args:
 		input_file (str): The name of input file.
-		k (int): The number of bits to split by.
+		m (int): The number of bits to split by.
 	Return:
 		list: The grouped bits in a list.
 	'''
-	bits = []
+	packets = []
 	track = 0
 	num_bits_sofar = 0
-	with open(dir_path + input_file, "r") as in_file:
+	num_packets_sofar = 0
+	with open(input_file, "r") as in_file:
 		b = in_file.read(1)
 		while b:
 			track = track*2 + int(b)
 			num_bits_sofar += 1
-			if num_bits_sofar > k:
-				bits.append(track)
-				num_bits_so_far = 0
+			if num_bits_sofar >= m:
+				packets.append(track)
+				num_bits_sofar = 0
+				num_packets_sofar = len(packets) % K
 				track = 0
 			b = in_file.read(1)
-		while num_bits_sofar < k:
-			track = track*2
-			num_bits_sofar += 1
-		bits.append(track)
-	return bits
+		# Ensure that each packet in "packets" is exactly m bits long
+		if num_bits_sofar != 0:
+			while num_bits_sofar < m:
+				track = track*2
+				num_bits_sofar += 1
+			packets.append(track)
+		# Ensures there are a multiple of K packets
+		if num_packets_sofar != 0:
+			while num_packets_sofar < K - 1:
+				packets.append(0)
+				num_packets_sofar += 1
+
+	print("num packets: ", len(packets))
+	return packets
 
 
-def encode(bits, n, k, p):
+def encode(packets, n, k, p, output_file):
 	'''
-	Takes list of grouped bits and encode using B-W algorithm.
+	Takes list of grouped bits and encode using B-W algorithm. Writes to an output file.
 	
 	Args:
 		bits(list): The list of bits.
@@ -55,15 +74,37 @@ def encode(bits, n, k, p):
 		k: The actual degree of the polynomial you want to encode
 		p: Modulo
 			k < n < p
+		output_file (str): The file to write the encoded points to.
 	Returns:
 
 	'''
-	encoder, decoder, s = wb.makeEncoderDecoder(n, k, p)
-	bw_encoded_message = []
-	while i < len(bits):
-		chunk = [bits[j] for j in range(i, i+k)]
+	encoder, decoder, _ = wb.makeEncoderDecoder(n, k, p)
+	bw_encoded_points = []
+	bw_written_points = ""
+	i = 0
+	while i < len(packets):
+		chunk = [packets[j] for j in range(i, i+k)]
 		i += k
-		bw_encoded_message.append([encoder(chunk)])
-	return bw_encoded_message
+		points = encoder(chunk)
+		bw_encoded_points.append(points)
+		points_y = [p[1] for p in points]
+		for y in points_y:
+			bw_written_points += str(y) + "\n"
+
+	with open(output_file, "w") as out_file:
+		out_file.write(bw_written_points)
+
+	print("Encoded to {} using error correction.".format(output_file))
+
+	return bw_encoded_points
+
+def berlekamp_welsh_encode(input_file, m, output_file):
+	packets = split_message(input_file, m)
+	encode(packets, N, K, P, output_file)
+	print("Error correction encode successful.")
+	print("__________________________")
+
+if __name__ == "__main__":
+	berlekamp_welsh_encode(dir_path+"encoded/EncodeFile4.txt", 4, dir_path+"error_encoded/ErrorEncodeFile4.txt")
 
 
