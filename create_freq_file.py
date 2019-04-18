@@ -1,6 +1,6 @@
 '''
 Script to read a large text file and create a frequency table of ascii characters. Converts chars to ints 
-using ord(). Use chr() to convert back.
+using ord(). Use chr() to convert back. Currently reads Moby Dick and Pride and Prejudice.
 '''
 
 import os

@@ -34,6 +34,7 @@ def create_freq_dict(freq_file):
 
 			line = in_file.readline()
 
+	freq_dict[126] = 1.    # ~ corresonds to characters that do not exist in frequency table
 	return freq_dict
 
 def create_huffman_dictionary(freq_dict):
@@ -80,7 +81,10 @@ def huffman_encode(text_file, output_file, huffman_dict):
 		text_string = in_file.read()
 		output_str = ""
 		for c in text_string:
-			output_str += huffman_dict[ord(c)]
+			try:
+				output_str += huffman_dict[ord(c)]
+			except KeyError as err:
+				output_str += huffman_dict[126]
 
 		out_file.write(output_str)
 
@@ -103,7 +107,7 @@ def convert(text_file, output_file, freq_file):
 	total_sum = sum([f for f in freq_dict.values()])
 	entropy = -sum([(f/total_sum)*math.log(f/total_sum) for f in freq_dict.values()])
 	print("Entropy: ", entropy)
-	print("Phase 1: Encoding Success")
+	print("Huffman Encoding Success")
 	print("__________________________")
 
 if __name__ == "__main__":

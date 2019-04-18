@@ -1,0 +1,3 @@
+These are libraries or resources we used in the course of this project.
+
+Berlekamp-Welsh library: https://github.com/j2kun/welch-berlekamp
