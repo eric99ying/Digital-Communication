@@ -1,5 +1,3 @@
 These are libraries or resources we used in the course of this project.
 
-Lagrange interpolation: https://stackoverflow.com/questions/4003794/lagrange-interpolation-in-python
-
 Berlekamp-Welsh library: https://github.com/j2kun/welch-berlekamp

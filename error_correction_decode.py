@@ -1,7 +1,10 @@
 '''
 error_correction_decode.py
 ~~~
-Perform berlekamp-welsh to decode the encoded transmitted bits.
+Perform berlekamp-welsh to decode the encoded transmitted bits. Writes to an output file. 
+
+message-> huffman_encode -> error_correction_encode -> transmission -> receive 
+-> error_correction_decode -> huffman_decode -> retrieved message
 '''
 import os
 import re
@@ -26,7 +29,7 @@ def read_message(input_file):
 	Args:
 		input_file (str): The input file name.
 	Return:
-		list: A list of the points on polynomials. 
+		list: A list of the points on polynomials. ie. [[0, 3], [1, 2], [2, 15],...]
 	'''
 	packets = []
 	cur_n = 0
@@ -46,7 +49,14 @@ def decode(points, n, k, p, output_file, m):
 	output_file.
 
 	Args:
-		points
+		points (list): The list of points from read_message.
+		n (int): The number of packets transmitted for each k values. n > k for redundancy.
+		k (int): The degree of the polynomial that we want to figure out.
+		p (int): Modulo space. p > n > k
+		output_file (str): The name of the output text file.
+		m (int): The number of bits grouped together. Usually we would group 4 bits together.
+	Returns:
+		list: The coefficients of the polynomials decoded.
 	'''
 	encoder, decoder, s = wb.makeEncoderDecoder(n, k, p)
 	decoded_message = []
