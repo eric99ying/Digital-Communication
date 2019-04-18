@@ -12,7 +12,7 @@ from berlekamp_welsh.finitefield.finitefield import FiniteField
 NUM_SOUNDS = 16
 N = 16
 K = 12
-P = 97
+P = 17
 
 fp = FiniteField(P)
 
@@ -51,14 +51,16 @@ def decode(points, n, k, p, output_file, m):
 	encoder, decoder, s = wb.makeEncoderDecoder(n, k, p)
 	decoded_message = []
 	i = 0
+	final_message = ""
 	while i < len(points):
 		#print(points[i:i+n])
-		decoded_message.extend(list(decoder(points[i:i+n])))
+		dm = list(decoder(points[i:i+n]))
+		if len(dm) < k:
+			dm.append(0)
+		decoded_message.extend(dm)
 		i = i+n
-
-	final_message = ""
-	for j in decoded_message:
-		final_message += bin(int(j))[2:].zfill(m)
+		for j in dm: 
+			final_message += str(bin(int(j))[2:].zfill(m))[-m:]
 
 	with open(output_file, "w") as out_file:
 		out_file.write(final_message)
