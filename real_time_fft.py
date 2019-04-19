@@ -20,36 +20,47 @@ def plot(freq, fft_coeffs): #freq vs fft coefficients
 	plt.show()
 	plt.close()
 
-def frequencies_dictionary(file_name):
+def frequencies_array(file_name):
 	file1 = open(file_name, 'r')
-	file1.close()
+	
 
 	freq_array = file1.readlines()
-	freq_array_int = [int(i) for i in freq_array]
-	dictionary = {}
-	for i in range(len(freq_array_int)):
-		dictionary[i] = freq_array_int[i]
-	return dictionary
+	file1.close()
+	freq_array_int = []
+	for elem in freq_array:
+		if elem[:len(elem)-3] != '':
+			freq_array_int.append(float(elem[:len(elem)-3]))
+	return freq_array_int
+
+def classify_freq(freq, freq_list):
+	if freq < freq_list[0]:
+		return 0
+	for i in range(1, len(freq_list)):
+		if freq <= freq_list[i]:
+			if(freq - freq_list[i-1] > freq_list[i] - freq):
+				return i
+			return i - 1
+	return len(freq_list) - 1
 
 
-def start():
+#sampling every 0.048 seconds
+if __name__=="__main__":
+	#frequencies_arr = frequencies_array("frequencies.txt")
+	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
+	#print(classify)
+
 	CHUNK = 2117*5 # number of data points to read at a time
 	RATE = 44100 # time resolution of the recording device (Hz)
 
 	p=pyaudio.PyAudio()
 	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK) #uses default input device
-	d1 = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
+	freq_list = frequencies_array("frequencies.txt")
+	#d1 = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
 	#print(d1)
 	start_time = time.time()
-	print('RECORDING STARTED', 0)
-	# create a numpy array holding a single read of audio data
+	print('RECORDING STARTED', 0)	# create a numpy array holding a single read of audio data
 	frequency_array = []
 	timeout = time.time() + 10  #10 seconds
-
-	"""i = 0
-	while i <= 6:
-		stream.read(CHUNK)
-		i+=1"""
 
 	while time.time() < timeout: #to it a few times just to see
 		#adjust_time_start = time.time() 
@@ -57,7 +68,7 @@ def start():
 		frequency = find_frequency(data)
 		frequency_array.append(frequency)
 
-		print("dominant frequency: %d Hz"%frequency)
+		print("classified freq: %d"%classify_freq(frequency, freq_list))
 
 		#start frequency 
 		
@@ -80,13 +91,6 @@ def start():
 
 	#print(frequency_array)
 
-#def frequency_to_ints(frequency_array):
-
-
-#sampling every 0.048 seconds
-if __name__=="__main__":
-	frequencies_dict = frequencies_dictionary("frequencies.txt")
-	print(frequencies_dict)
 	
 
 
