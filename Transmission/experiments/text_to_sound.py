@@ -17,7 +17,7 @@ def get_freq_list(low, high, num_points):
 	#returns list of num_points frequencies from low to high, with intervals defined by polynomial ax^2 + low.
 
 	diff = high - low
-	a = diff/((num_points - 1) ** 2)
+	a = diff/((num_points - 1) * ((num_points - 1)))
 
 	return [low + a * (i * i) for i in range(num_points)]
 
@@ -29,7 +29,8 @@ def read_message(input_file, low, high, num_points):
 			writeSinWave(freq_list[b], obj)
 	
 
-read_message("ErrorEncodeFile4.txt", 500, 7000, 17)
+read_message("../../error_encoded/500_char_error_encode.txt", 500, 7000, 17)
+#print(get_freq_list(500,7000,17))
 
 
 
