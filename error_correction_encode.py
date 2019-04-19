@@ -109,7 +109,7 @@ def berlekamp_welsh_encode(input_file, m, output_file):
 	print("__________________________")
 
 if __name__ == "__main__":
-	berlekamp_welsh_encode(dir_path+"encoded/EncodeFile4.txt", 4, dir_path+"error_encoded/ErrorEncodeFile4.txt")
+	berlekamp_welsh_encode(dir_path+"encoded/500_char_encode.txt", 4, dir_path+"error_encoded/500_char_error_encode.txt")
 
 	# encoder, decoder, _ = wb.makeEncoderDecoder(N, K, P)
 	# a = [random.randint(0, P-1) for i in range(K-1)]

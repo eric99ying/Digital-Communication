@@ -85,6 +85,6 @@ def berlekamp_welsh_decode(input_file, m, output_file):
 
 
 if __name__ == "__main__":
-	berlekamp_welsh_decode(dir_path+"error_encoded/ErrorEncodeFile4.txt", 4, dir_path+"error_decoded/ErrorDecodeFile4.txt")
+	berlekamp_welsh_decode(dir_path+"error_encoded/500_char_error_encode.txt", 4, dir_path+"error_decoded/500_char_error_decode.txt")
 
 
