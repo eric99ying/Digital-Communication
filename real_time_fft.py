@@ -20,26 +20,47 @@ def plot(freq, fft_coeffs): #freq vs fft coefficients
 	plt.show()
 	plt.close()
 
-#sampling every 0.09287 seconds
-if __name__=="__main__":
-	CHUNK = 4410 # number of data points to read at a time
+def frequencies_dictionary(file_name):
+	file1 = open(file_name, 'r')
+	file1.close()
+
+	freq_array = file1.readlines()
+	freq_array_int = [int(i) for i in freq_array]
+	dictionary = {}
+	for i in range(len(freq_array_int)):
+		dictionary[i] = freq_array_int[i]
+	return dictionary
+
+
+def start():
+	CHUNK = 2117*5 # number of data points to read at a time
 	RATE = 44100 # time resolution of the recording device (Hz)
 
 	p=pyaudio.PyAudio()
 	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK) #uses default input device
+	d1 = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
+	#print(d1)
 	start_time = time.time()
 	print('RECORDING STARTED', 0)
 	# create a numpy array holding a single read of audio data
-
 	frequency_array = []
 	timeout = time.time() + 10  #10 seconds
+
+	"""i = 0
+	while i <= 6:
+		stream.read(CHUNK)
+		i+=1"""
 
 	while time.time() < timeout: #to it a few times just to see
 		#adjust_time_start = time.time() 
 		data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
 		frequency = find_frequency(data)
 		frequency_array.append(frequency)
+
 		print("dominant frequency: %d Hz"%frequency)
+
+		#start frequency 
+		
 
 		#adjust_time_end = time.time()
 		#difference = adjust_time_end - adjust_time_start
@@ -59,7 +80,16 @@ if __name__=="__main__":
 
 	#print(frequency_array)
 
+#def frequency_to_ints(frequency_array):
 
-#def frequency_to_bits(frequency_array):
+
+#sampling every 0.048 seconds
+if __name__=="__main__":
+	frequencies_dict = frequencies_dictionary("frequencies.txt")
+	print(frequencies_dict)
+	
+
+
+
 
 	
