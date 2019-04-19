@@ -7,3 +7,9 @@ This project attempts to communicate a text file from one computer to another us
 Pipeline:
 
 message-> huffman_encode -> error_correction_encode -> transmission -> receive-> error_correction_decode -> huffman_decode -> retrieved message
+
+
+
+Source:
+
+Berlekamp-Welsh library: https://github.com/j2kun/welch-berlekamp
