@@ -1,6 +1,6 @@
 import wave, struct, math, random, os, re
 sampleRate = 44100.0 # hertz
-duration = .048 # seconds
+duration = .048 * 5 # seconds
 
 obj = wave.open('transmission.wav','w')
 obj.setnchannels(1) # mono
@@ -29,7 +29,7 @@ def read_message(input_file, low, high, num_points):
 			writeSinWave(freq_list[b], obj)
 	
 
-read_message("../../error_encoded/500_char_error_encode.txt", 500, 7000, 17)
+read_message("../../error_encoded/500_char_error_encode.txt", 1500, 7000, 17)
 #print(get_freq_list(500,7000,17))
 
 
