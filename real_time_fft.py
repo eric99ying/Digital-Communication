@@ -3,6 +3,7 @@ import numpy as np
 import pyaudio
 import time
 import matplotlib.pyplot as plt
+import math
 
 def find_frequency(data):
 	data = data * np.hanning(len(data)) #window data
@@ -42,6 +43,14 @@ def classify_freq(freq, freq_list):
 			return i - 1
 	return len(freq_list) - 1
 
+def start_frequency(test_freq, frequencies_array):
+	for freq in frequencies_array:
+		if abs(freq-test_freq) < 15:
+			return True
+	return False
+
+
+
 
 #sampling every 0.048 seconds
 if __name__=="__main__":
@@ -49,24 +58,38 @@ if __name__=="__main__":
 	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
 	#print(classify)
 
-	CHUNK = 2117*5 # number of data points to read at a time
+	CHUNK = 2205 # number of data points to read at a time
 	RATE = 44100 # time resolution of the recording device (Hz)
 
+	#begin = time.time()
+	#alignment_buffer = 8
+	#alignment_time = ((begin//alignment_buffer)+2) * alignment_buffer
+	#print('begin', begin)
+	#print('alignment_time', alignment_time)
+
 	p=pyaudio.PyAudio()
-	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK) #uses default input device
+	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK, start = False) #uses default input device
 	freq_list = frequencies_array("frequencies.txt")
-	#d1 = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
-	#print(d1)
+
+	#while time.time() < alignment_time:
+	#	continue
+
 	start_time = time.time()
-	print('RECORDING STARTED', 0)	# create a numpy array holding a single read of audio data
+	print('RECORDING STARTED', start_time)	# create a numpy array holding a single read of audio data
 	frequency_array = []
+	classify_array = []
 	timeout = time.time() + 10  #10 seconds
 
-	while time.time() < timeout: #to it a few times just to see
+	start_heard =False
+	stream.start_stream()
+	while time.time() < timeout: 
 		#adjust_time_start = time.time() 
 		data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
+
+
 		frequency = find_frequency(data)
 		frequency_array.append(frequency)
+
 
 		print("classified freq: %d"%classify_freq(frequency, freq_list))
 
@@ -82,7 +105,7 @@ if __name__=="__main__":
 	
 	end_time = time.time()
 
-	print('RECORDING ENDED', round(end_time-start_time, 5))
+	print('RECORDING ENDED', round(end_time, 5))
 	#print('runtime of program:', end_time-start_time)
 	# close the stream gracefully
 	stream.stop_stream()
