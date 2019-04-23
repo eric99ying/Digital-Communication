@@ -58,7 +58,7 @@ if __name__=="__main__":
 	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
 	#print(classify)
 
-	CHUNK = 2205 # number of data points to read at a time
+	CHUNK = 4410 # number of data points to read at a time
 	RATE = 44100 # time resolution of the recording device (Hz)
 
 	#begin = time.time()
@@ -68,7 +68,7 @@ if __name__=="__main__":
 	#print('alignment_time', alignment_time)
 
 	p=pyaudio.PyAudio()
-	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK, start = False) #uses default input device
+	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK) #uses default input device
 	freq_list = frequencies_array("frequencies.txt")
 
 	#while time.time() < alignment_time:
@@ -80,18 +80,18 @@ if __name__=="__main__":
 	classify_array = []
 	timeout = time.time() + 10  #10 seconds
 
-	start_heard =False
-	stream.start_stream()
+	#stream.start_stream()
 	while time.time() < timeout: 
 		#adjust_time_start = time.time() 
 		data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
-
-
 		frequency = find_frequency(data)
 		frequency_array.append(frequency)
 
+		#if (abs(frequency-7000) < 5):
+		classify_array.append(classify_freq(frequency, freq_list))
 
-		print("classified freq: %d"%classify_freq(frequency, freq_list))
+		print("actual freq: %d"%frequency)
+		#print("classified freq: %d"%classify_freq(frequency, freq_list))
 
 		#start frequency 
 		
@@ -111,6 +111,15 @@ if __name__=="__main__":
 	stream.stop_stream()
 	stream.close()
 	p.terminate()
+
+	output_file = 'classify.txt'
+
+	with open(output_file, 'w') as classify_file:
+		for classification in classify_array:
+			classify_file.write(str(classification) + '\n')
+
+	classify_file.close()
+
 
 	#print(frequency_array)
 
