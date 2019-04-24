@@ -12,9 +12,11 @@ import re
 from berlekamp_welsh import welchberlekamp as wb
 from berlekamp_welsh.finitefield.finitefield import FiniteField
 
-N = 16
-K = 12
-P = 17
+
+NUM_SOUNDS = 16
+N = 100
+K = 50
+P = 101
 
 fp = FiniteField(P)
 

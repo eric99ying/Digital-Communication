@@ -7,6 +7,8 @@ obj.setnchannels(1) # mono
 obj.setsampwidth(2)
 obj.setframerate(sampleRate)
 
+duration = 0.01
+
 def writeSinWave(freq, wav_obj = obj):
    for i in range(int(sampleRate * duration)):
 	   value = int(math.sin(2 * math.pi /(sampleRate/freq) * i) * 10000)

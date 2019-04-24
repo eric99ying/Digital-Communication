@@ -1,6 +1,7 @@
 import wave, struct, math, random, os, re
 sampleRate = 44100.0 # hertz
 duration = .048 * 5 # seconds
+duration = 0.5
 
 obj = wave.open('transmission.wav','w')
 obj.setnchannels(1) # mono
