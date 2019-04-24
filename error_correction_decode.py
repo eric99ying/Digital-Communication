@@ -25,43 +25,59 @@ dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 ############################
 # LAGRANGE INTERPOLATION
 
+# Multiply two polynomials together, returns list of coefficients
+def mul_poly(poly1, poly2):
+	deg1 = len(poly1)
+	deg2 = len(poly2)
+	final_poly = [fp(0)] * (deg1 + deg2 - 1)
+	for i in range(len(poly1)):
+		for j in range(len(poly2)):
+			final_poly[i+j] = final_poly[i+j] + poly1[i]*poly2[j]
+	return final_poly
+
+# Add two polynomials together, returns list of coefficients
+def add_poly(poly1, poly2):
+	final_poly = [fp(0)] * max(len(poly1), len(poly2))
+	for i in range(len(final_poly)):
+		if i >= len(poly1):
+			final_poly[i] = poly2[i]
+		elif i >= len(poly2):
+			final_poly[i] = poly1[i]
+		else:
+			final_poly[i] = poly2[i] + poly1[i]
+	return final_poly
+
+# Compute multiplicative inverse modulo a prime.
 def inv(a, prime):
-    """
-    Compute multiplicative inverse modulo a prime.
-    """
-    return pow(a, prime-2, prime)
+	"""
+	
+	"""
+	return pow(a, prime-2, prime)
 
+# Finds the coefficients of the langrage interpolated polynomial from the x, y points provided
+def interpolate(xpoints, ypoints, prime):
+	coefs = []
+	for i in range(len(xpoints)):
+		yi = ypoints[i]
 
-def interpolate(points, prime):
-    if type(points) is list and all([type(p) is int for p in points]):
-        points = dict(zip(range(1,len(points)+1), points))
-    elif type(points) in [list,set,tuple] and\
-       len(points) > 0 and\
-       all([type(p) in [list,tuple] and len(p) == 2 for p in points]):
-        points = dict([tuple(p) for p in points])
-    elif type(points) is dict:
-        pass
-    else:
-        raise TypeError("Expecting a list of values, list of points, or a mapping.")
+		# calculate the denominator of the lagrange term
+		res = []
+		denom = fp(1)
+		for j in range(len(xpoints)):
+			if i != j:
+				denom = denom * (xpoints[i] - xpoints[j])
+		inv_denom = fp(inv(int(denom), prime))
 
-    if type(prime) != int or prime <= 1:
-        raise ValueError("Expecting a prime modulus.")
+		# calculate numerator
+		res = [fp(1)]
+		for j in range(len(xpoints)):
+			if i != j:
+				res = mul_poly(res, [xpoints[j], -1])
+		final_res = mul_poly(mul_poly(res, [inv_denom]), [yi])
+		coefs = add_poly(coefs, final_res)
 
-    # Compute the Langrange coefficients at 0.
-    coefficients = {}
-    for i in range(1, len(points)+1):
-      coefficients[i] = 1
-      for j in range(1, len(points)+1):
-        if j != i:
-          coefficients[i] = (coefficients[i] * (0-j) * inv(i-j, prime)) % prime
+	return coefs
 
-    value = 0
-    print("P: ", points)
-    print("C: ", coefficients)
-    for i in range(1, len(points)+1):
-      value = (value + points[i] * coefficients[i]) % prime
-
-    return value, coefficients
 
 
 ############################
@@ -118,20 +134,20 @@ def decode(points, n, k, p, output_file, m):
 			print("No solution found for B-W equations. Resorting to naive method.")
 			received_points = pp
 			random_chosen_points = []
-			# for _ in range(k):
-			# 	random_chosen = random.choice(received_points)
-			# 	received_points.remove(random_chosen)
-			# 	random_chosen_points.append(random_chosen)
+			for _ in range(k):
+			 	random_chosen = random.choice(received_points)
+			 	received_points.remove(random_chosen)
+			 	random_chosen_points.append(random_chosen)
 
-			random_chosen_points = received_points[1:k+1]
+			#random_chosen_points = received_points[1:k+1]
 
-			xs = [int(x[0]) for x in random_chosen_points]
-			ys = [int(x[1]) for x in random_chosen_points]
-			lp = list(interpolate(list(zip(xs, ys)), p)[1])
+			xs = [x[0] for x in random_chosen_points]
+			ys = [x[1] for x in random_chosen_points]
+			lp = interpolate(xs, ys, p)
 			dm = lp
-			print("Lagrange interpolated coefficients: ", dm)
+			print("Interpolated coefficients: ", dm)
 
-		if len(dm) < k:
+		while len(dm) < k:
 			dm.append(0)
 		decoded_message.extend(dm)
 		i = i+n
@@ -152,5 +168,6 @@ def berlekamp_welsh_decode(input_file, m, output_file):
 
 if __name__ == "__main__":
 	berlekamp_welsh_decode(dir_path+"classify.txt", 4, dir_path+"error_decoded/error_decoded_classify.txt")
-
+	# lp = interpolate([fp(1), fp(2), fp(3)], [fp(2), fp(3), fp(5)], 17)
+	# print(lp)
 
