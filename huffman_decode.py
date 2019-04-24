@@ -150,7 +150,7 @@ def devert(bin_file, output_file, freq_file):
 
 if __name__ == "__main__":
 	#devert("encoded/EncodeFile4.txt", "decoded/DecodeFile4.txt", "frequency_table_2.txt")
-	devert("error_decoded/500_char_error_decode.txt", "decoded/500_char_decode.txt", "frequency_table_2.txt")
+	devert("error_decoded/error_decoded_classify.txt", "decoded/shorttest.txt", "frequency_table_2.txt")
 
 
 
