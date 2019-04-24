@@ -127,7 +127,7 @@ def decode(points, n, k, p, output_file, m):
 			ys = [int(x[1]) for x in random_chosen_points]
 			lp = list(interpolate(list(zip(xs, ys)), p)[1])
 			dm = lp
-			print("dm: ", dm)
+			print("Lagrange interpolated coefficients: ", dm)
 
 		if len(dm) < k:
 			dm.append(0)
