@@ -19,10 +19,9 @@ dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 #number of unique sounds
 #p corresponds to the closest prime number greater than num_sounds
-NUM_SOUNDS = 16
-N = 16
-K = 12
-P = 17
+N = 100
+K = 50
+P = 101	
 
 def split_message(input_file, m):
 	'''
