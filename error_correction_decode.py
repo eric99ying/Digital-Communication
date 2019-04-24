@@ -7,12 +7,11 @@ message-> huffman_encode -> error_correction_encode -> transmission -> receive
 -> error_correction_decode -> huffman_decode -> retrieved message
 '''
 import os
+import random
 import re
 from berlekamp_welsh import welchberlekamp as wb
 from berlekamp_welsh.finitefield.finitefield import FiniteField
 
-
-NUM_SOUNDS = 16
 N = 16
 K = 12
 P = 17
@@ -20,6 +19,50 @@ P = 17
 fp = FiniteField(P)
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
+
+############################
+# LAGRANGE INTERPOLATION
+
+def inv(a, prime):
+    """
+    Compute multiplicative inverse modulo a prime.
+    """
+    return pow(a, prime-2, prime)
+
+
+def interpolate(points, prime):
+    if type(points) is list and all([type(p) is int for p in points]):
+        points = dict(zip(range(1,len(points)+1), points))
+    elif type(points) in [list,set,tuple] and\
+       len(points) > 0 and\
+       all([type(p) in [list,tuple] and len(p) == 2 for p in points]):
+        points = dict([tuple(p) for p in points])
+    elif type(points) is dict:
+        pass
+    else:
+        raise TypeError("Expecting a list of values, list of points, or a mapping.")
+
+    if type(prime) != int or prime <= 1:
+        raise ValueError("Expecting a prime modulus.")
+
+    # Compute the Langrange coefficients at 0.
+    coefficients = {}
+    for i in range(1, len(points)+1):
+      coefficients[i] = 1
+      for j in range(1, len(points)+1):
+        if j != i:
+          coefficients[i] = (coefficients[i] * (0-j) * inv(i-j, prime)) % prime
+
+    value = 0
+    print("P: ", points)
+    print("C: ", coefficients)
+    for i in range(1, len(points)+1):
+      value = (value + points[i] * coefficients[i]) % prime
+
+    return value, coefficients
+
+
+############################
 
 
 def read_message(input_file):
@@ -40,6 +83,7 @@ def read_message(input_file):
 			packets.append([fp(cur_n), fp(b)])  # Append the x and y points of the polynomial
 			cur_n = (cur_n + 1)%N
 			b = in_file.readline()
+	print("Number of points received: ", len(packets))
 	return packets
 
 
@@ -63,8 +107,28 @@ def decode(points, n, k, p, output_file, m):
 	i = 0
 	final_message = ""
 	while i < len(points):
-		#print(points[i:i+n])
-		dm = list(decoder(points[i:i+n]))
+		pp = points[i:i+n]
+		print("Num points on polynomial: ", len(pp))
+		# print("Points on polynomial: ", pp)
+		try:
+			dm = list(decoder(pp))
+		except Exception as e:
+			print("No solution found for B-W equations. Resorting to naive method.")
+			received_points = pp
+			random_chosen_points = []
+			# for _ in range(k):
+			# 	random_chosen = random.choice(received_points)
+			# 	received_points.remove(random_chosen)
+			# 	random_chosen_points.append(random_chosen)
+
+			random_chosen_points = received_points[1:k+1]
+
+			xs = [int(x[0]) for x in random_chosen_points]
+			ys = [int(x[1]) for x in random_chosen_points]
+			lp = list(interpolate(list(zip(xs, ys)), p)[1])
+			dm = lp
+			print("Lagrange interpolated coefficients: ", dm)
+
 		if len(dm) < k:
 			dm.append(0)
 		decoded_message.extend(dm)
