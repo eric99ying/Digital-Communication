@@ -49,9 +49,6 @@ def add_poly(poly1, poly2):
 
 # Compute multiplicative inverse modulo a prime.
 def inv(a, prime):
-	"""
-	
-	"""
 	return pow(a, prime-2, prime)
 
 # Finds the coefficients of the langrage interpolated polynomial from the x, y points provided
@@ -72,7 +69,7 @@ def interpolate(xpoints, ypoints, prime):
 		res = [fp(1)]
 		for j in range(len(xpoints)):
 			if i != j:
-				res = mul_poly(res, [xpoints[j], -1])
+				res = mul_poly(res, [-xpoints[j], 1])
 		final_res = mul_poly(mul_poly(res, [inv_denom]), [yi])
 		coefs = add_poly(coefs, final_res)
 
@@ -126,10 +123,10 @@ def decode(points, n, k, p, output_file, m):
 	final_message = ""
 	while i < len(points):
 		pp = points[i:i+n]
-		print("Num points on polynomial: ", len(pp))
-		# print("Points on polynomial: ", pp)
 		try:
 			dm = list(decoder(pp))
+			print("B-W interp: ", dm)
+			print("___________________________")
 		except Exception as e:
 			print("No solution found for B-W equations. Resorting to naive method.")
 			received_points = pp
@@ -145,7 +142,10 @@ def decode(points, n, k, p, output_file, m):
 			ys = [x[1] for x in random_chosen_points]
 			lp = interpolate(xs, ys, p)
 			dm = lp
+			# print("Chosen points: ", random_chosen_points)
 			print("Interpolated coefficients: ", dm)
+			print("___________________________")
+
 
 		while len(dm) < k:
 			dm.append(0)
@@ -167,7 +167,9 @@ def berlekamp_welsh_decode(input_file, m, output_file):
 
 
 if __name__ == "__main__":
-	berlekamp_welsh_decode(dir_path+"classify.txt", 4, dir_path+"error_decoded/error_decoded_classify.txt")
+	berlekamp_welsh_decode(dir_path+"error_encoded/500_char_error_encode.txt", 4, dir_path+"error_decoded/500_char_error_decode.txt")
+
+	#berlekamp_welsh_decode(dir_path+"classify.txt", 4, dir_path+"error_decoded/error_decoded_classify.txt")
 	# lp = interpolate([fp(1), fp(2), fp(3)], [fp(2), fp(3), fp(5)], 17)
 	# print(lp)
 
