@@ -122,8 +122,6 @@ def decode(points, n, k, p, output_file, m):
 	while i < len(points):
 		pp = points[i:i+n]
 		try:
-			raise Exception
-			print("pp: ", pp)
 			dm = list(decoder(pp))
 			print("B-W interp: ", dm)
 			print("___________________________")
