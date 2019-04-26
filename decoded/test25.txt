@@ -1,9 +1,9 @@
-'''
+1.B. “Project Gutenberg” is a registered trademark. It may only be used on or associated in any way with an electronic work by people who agree to be bound by the terms of this agreement. There are a few things that you can do with most Project Gutenberg-tm electronic works even without complying with the full terms of this agreement. See paragraph 1.C below. There are a lot of things you can do with Project Gutenberg-tm electronic works if you follow the terms of thiseieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieieie'''
 error_correction.py
 ~~~
 Corrects errors in tranmission of bits through Reed Soloman and Berlekemp-Welsh. This file takes in 
 the huffman encoded binary file. It groups the bits in the binary file together, then treats each "packet" 
-as a coefficient of polynomial. We encode ever K packetets into a polynomial, and transmit N points over. P is
+as a coefficient of polynomial. We encode ever K packets into a polynomial, and transmit N points over. P is
 the modulo space we work in, and thus must be larger than N or K. 
 
 Pipeline

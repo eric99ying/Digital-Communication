@@ -11,12 +11,11 @@ import random
 import re
 from berlekamp_welsh import welchberlekamp as wb
 from berlekamp_welsh.finitefield.finitefield import FiniteField
+import parameters
 
-
-NUM_SOUNDS = 128
-N = 128
-K = 64
-P = 129
+N = parameters.N
+K = parameters.K
+P = parameters.P
 
 fp = FiniteField(P)
 
@@ -167,9 +166,5 @@ def berlekamp_welsh_decode(input_file, m, output_file):
 
 
 if __name__ == "__main__":
-	berlekamp_welsh_decode(dir_path+"classify.txt", 7, dir_path+"error_decoded/500_char_error_decode.txt")
-
-	#berlekamp_welsh_decode(dir_path+"classify.txt", 4,	dir_path+"error_decoded/error_decoded_classify.txt")
-	# lp = interpolate([fp(1), fp(2), fp(3)], [fp(2), fp(3), fp(5)], 17)
-	# print(lp)
+	berlekamp_welsh_decode(dir_path+parameters.error_encode_output, parameters.group, dir_path+parameters.error_decode_output)
 

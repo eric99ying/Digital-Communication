@@ -9,11 +9,12 @@ from huffman_decode import *
 from error_correction_decode import *
 import real_time_fft as fft
 import os
+import parameters
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 if __name__ == "__main__":
+	# Receive sound
 	fft.main()
-	error_correction_decode.berlekamp_welsh_decode(dir_path+"recieved/classify.txt", 4, dir_path+"error_decoded/error_decoded_500_char.txt")
-	huffman_decode.devert("error_decoded/error_decoded_500_char.txt", "decoded/500_char_decode_FINAL.txt", "frequency_table_2.txt")
-	# transmit sound
+	error_correction_decode.berlekamp_welsh_decode(dir_path+parameters.receive_output, parameters.group, dir_path+parameters.error_decode_output)
+	huffman_decode.devert(parameters.error_decode_output, parameters.huffman_decode_output, "frequency_table_2.txt")

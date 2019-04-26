@@ -8,6 +8,7 @@ import heapq
 import re
 import math
 import binascii
+import parameters 
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
@@ -112,7 +113,6 @@ def convert(text_file, output_file, freq_file):
 
 if __name__ == "__main__":
 
-	#convert("tests/short.txt", "encoded/short_encode.txt", "frequency_table_2.txt")
-	convert("tests/500_char.txt", "encoded/500_char_encode.txt", "frequency_table_2.txt")
+	convert(parameters.input_text_file, parameters.huffman_encode_output, "frequency_table_2.txt")
 
 
