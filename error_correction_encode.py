@@ -14,14 +14,14 @@ huffman_encode -> error_correction_encode -> transmission -> receive -> error_co
 from berlekamp_welsh import welchberlekamp as wb
 import os
 import random
-
+`
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 #number of unique sounds
 #p corresponds to the closest prime number greater than num_sounds
-N = 100
-K = 50
-P = 101	
+N = 128
+K = 64
+P = 129	
 
 def split_message(input_file, m):
 	'''
@@ -108,7 +108,7 @@ def berlekamp_welsh_encode(input_file, m, output_file):
 	print("__________________________")
 
 if __name__ == "__main__":
-	berlekamp_welsh_encode(dir_path+"encoded/500_char_encode.txt", 4, dir_path+"error_encoded/500_char_error_encode.txt")
+	berlekamp_welsh_encode(dir_path+"encoded/500_char_encode.txt", 7, dir_path+"error_encoded/500_char_error_encode.txt")
 
 	# encoder, decoder, _ = wb.makeEncoderDecoder(N, K, P)
 	# a = [random.randint(0, P-1) for i in range(K-1)]

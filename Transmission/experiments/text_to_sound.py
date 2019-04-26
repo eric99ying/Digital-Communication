@@ -37,7 +37,7 @@ def read_message(input_file, low, high, num_points):
 	
 duration = .048 * 2
 writeSinWave(7000)
-print(read_message("../../error_encoded/500_char_error_encode.txt", 1500, 7000, 101))
+print(read_message("../../error_encoded/500_char_error_encode.txt", 1500, 7000, 129))
 duration = 1
 writeSinWave(7750)
 #print(get_freq_list(500,7000,17))
