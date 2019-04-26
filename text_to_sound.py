@@ -44,7 +44,7 @@ def construct_wav(input_file, low, high, num_points, obj):
 	
 if __name__ == "__main__":
 	obj = make_wav_obj()	
-	construct_wav("error_encoded/500_char_error_encode.txt", 1500, 7000, 129, obj)
+	construct_wav("error_encoded/500_char_error_encode.txt", 1500, 7000, 131, obj)
 	
 #print(get_freq_list(500,7000,17))
 
