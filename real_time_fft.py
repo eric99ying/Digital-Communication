@@ -11,9 +11,11 @@ def find_frequency(data):
 	fft = fft[:int(len(fft)/2)]
 	freq = np.fft.fftfreq(CHUNK,1.0/RATE) #returns the highest frequency
 	freq = freq[:int(len(freq)/2)] 
-	freqDominant = freq[np.where(fft==np.max(fft))[0][0]]+1
+	freqDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
+	freqSecondDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
+	##print(freqSecondDominant, freqDominant)
 	#plot(freq, fft)
-	return freqDominant
+	return freqDominant, freqSecondDominant
 
 def plot(freq, fft_coeffs): #freq vs fft coefficients
 	plt.plot(freq,fft_coeffs)
@@ -51,6 +53,11 @@ def start_frequency(test_freq, frequencies_array):
 
 
 
+end_freq = 7750
+end_window = 50
+start_freq = 7000
+start_window = 50
+N = 100
 
 #sampling every 0.048 seconds
 if __name__=="__main__":
@@ -58,7 +65,7 @@ if __name__=="__main__":
 	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
 	#print(classify)
 
-	CHUNK = 4410 # number of data points to read at a time
+	CHUNK = 2117 * 2# number of data points to read at a time
 	RATE = 44100 # time resolution of the recording device (Hz)
 
 	#begin = time.time()
@@ -78,19 +85,43 @@ if __name__=="__main__":
 	print('RECORDING STARTED', start_time)	# create a numpy array holding a single read of audio data
 	frequency_array = []
 	classify_array = []
-	timeout = time.time() + 10  #10 seconds
+	#timeout = time.time() + 10  #10 seconds
 
+	starting_flag = False
+	prev_freq = -1
+	count = 0
 	#stream.start_stream()
-	while time.time() < timeout: 
+	while True: 
 		#adjust_time_start = time.time() 
 		data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
-		frequency = find_frequency(data)
-		frequency_array.append(frequency)
+		frequency, second_freq = find_frequency(data)
+		classified_frequency = classify_freq(frequency, freq_list)
 
+		if classified_frequency == prev_freq:
+			classified_frequency = classify_freq(second_freq, freq_list)
+
+		
+		if abs(frequency - end_freq) < end_window:
+			print("Ending frequency heard")
+			break
+		
+		frequency_array.append(classified_frequency)
+		if starting_flag:
+			classify_array.append(classified_frequency)
+			#print("Raw freq", frequency)
+			"""if (abs(frequency - second_freq) < 40):
+				print(frequency, second_freq)
+				count += 1"""
+
+		if abs(frequency - start_freq) < start_window:
+			if starting_flag == False:
+				print("Starting frequency heard")
+				prev_freq = 128
+			starting_flag = True
+		prev_freq = classified_frequency
 		#if (abs(frequency-7000) < 5):
-		classify_array.append(classify_freq(frequency, freq_list))
-
-		print("actual freq: %d"%frequency)
+		
+		#print("actual freq: %d"%frequency)
 		#print("classified freq: %d"%classify_freq(frequency, freq_list))
 
 		#start frequency 
@@ -104,8 +135,10 @@ if __name__=="__main__":
 		
 	
 	end_time = time.time()
-
+	
 	print('RECORDING ENDED', round(end_time, 5))
+	
+	print("Received ", len(classify_array), " points")
 	#print('runtime of program:', end_time-start_time)
 	# close the stream gracefully
 	stream.stop_stream()
@@ -113,6 +146,8 @@ if __name__=="__main__":
 	p.terminate()
 
 	output_file = 'classify.txt'
+
+
 
 	with open(output_file, 'w') as classify_file:
 		for classification in classify_array:
