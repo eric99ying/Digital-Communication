@@ -168,4 +168,3 @@ def berlekamp_welsh_decode(input_file, m, output_file):
 if __name__ == "__main__":
 	berlekamp_welsh_decode(dir_path+parameters.error_encode_output, parameters.group, dir_path+parameters.error_decode_output)
 
-

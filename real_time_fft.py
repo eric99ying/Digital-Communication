@@ -58,15 +58,12 @@ end_window = 50
 start_freq = 7000
 start_window = 50
 N = 100
+CHUNK = 2117 * 2# number of data points to read at a time
+RATE = 44100
 
-#sampling every 0.048 seconds
-if __name__=="__main__":
-	#frequencies_arr = frequencies_array("frequencies.txt")
-	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
-	#print(classify)
+def main():
 
-	CHUNK = 2117 * 2# number of data points to read at a time
-	RATE = 44100 # time resolution of the recording device (Hz)
+	 # time resolution of the recording device (Hz)
 
 	#begin = time.time()
 	#alignment_buffer = 8
@@ -164,3 +161,11 @@ if __name__=="__main__":
 
 
 	
+
+#sampling every 0.048 seconds
+
+if __name__=="__main__":
+	#frequencies_arr = frequencies_array("frequencies.txt")
+	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
+	#print(classify)
+	main()
