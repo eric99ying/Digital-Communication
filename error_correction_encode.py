@@ -14,7 +14,6 @@ huffman_encode -> error_correction_encode -> transmission -> receive -> error_co
 from berlekamp_welsh import welchberlekamp as wb
 import os
 import random
-`
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 #number of unique sounds

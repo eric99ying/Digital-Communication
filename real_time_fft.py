@@ -12,10 +12,8 @@ def find_frequency(data):
 	freq = np.fft.fftfreq(CHUNK,1.0/RATE) #returns the highest frequency
 	freq = freq[:int(len(freq)/2)] 
 	freqDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
-	fft = np.delete(fft, np.max(fft))
-	freq = np.delete(freq, freqDominant - 1)
 	freqSecondDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
-	print(freqSecondDominant, freqDominant)
+	##print(freqSecondDominant, freqDominant)
 	#plot(freq, fft)
 	return freqDominant, freqSecondDominant
 
@@ -67,7 +65,7 @@ if __name__=="__main__":
 	#classify = [classify_freq(freq, frequencies_arr) for freq in frequencies_arr]
 	#print(classify)
 
-	CHUNK = 2117# number of data points to read at a time
+	CHUNK = 2117 * 2# number of data points to read at a time
 	RATE = 44100 # time resolution of the recording device (Hz)
 
 	#begin = time.time()
@@ -118,7 +116,7 @@ if __name__=="__main__":
 		if abs(frequency - start_freq) < start_window:
 			if starting_flag == False:
 				print("Starting frequency heard")
-				prev_freq = 100
+				prev_freq = 128
 			starting_flag = True
 		prev_freq = classified_frequency
 		#if (abs(frequency-7000) < 5):
