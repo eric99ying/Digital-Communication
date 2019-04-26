@@ -1,4 +1,5 @@
 import wave, struct, math, random, os, re
+import parameters
 	
 sampleRate = 44100.0 # hertz
 CHUNK = 2117
@@ -44,7 +45,7 @@ def construct_wav(input_file, low, high, num_points, obj):
 	
 if __name__ == "__main__":
 	obj = make_wav_obj()	
-	construct_wav("error_encoded/500_char_error_encode.txt", 1500, 7000, 129, obj)
+	construct_wav(parameters.error_encode_output, 1500, 7000, parameters.P, obj)
 	
 #print(get_freq_list(500,7000,17))
 

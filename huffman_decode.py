@@ -9,6 +9,7 @@ import os
 import re
 import heapq
 import operator
+import parameters
 
 
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
@@ -150,7 +151,7 @@ def devert(bin_file, output_file, freq_file):
 
 if __name__ == "__main__":
 	#devert("encoded/EncodeFile4.txt", "decoded/DecodeFile4.txt", "frequency_table_2.txt")
-	devert("error_decoded/error_decoded_classify.txt", "decoded/shorttest.txt", "frequency_table_2.txt")
+	devert(parameters.error_decode_output, parameters.huffman_decode_output, "frequency_table_2.txt")
 
 
 
