@@ -3,7 +3,7 @@ error_correction.py
 ~~~
 Corrects errors in tranmission of bits through Reed Soloman and Berlekemp-Welsh. This file takes in 
 the huffman encoded binary file. It groups the bits in the binary file together, then treats each "packet" 
-as a coefficient of polynomial. We encode ever K packets into a polynomial, and transmit N points over. P is
+as a coefficient of polynomial. We encode ever K packetets into a polynomial, and transmit N points over. P is
 the modulo space we work in, and thus must be larger than N or K. 
 
 Pipeline
