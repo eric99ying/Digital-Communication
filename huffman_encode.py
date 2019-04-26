@@ -112,5 +112,7 @@ def convert(text_file, output_file, freq_file):
 
 if __name__ == "__main__":
 
-	convert("tests/short.txt", "encoded/short_encode.txt", "frequency_table_2.txt")
+	#convert("tests/short.txt", "encoded/short_encode.txt", "frequency_table_2.txt")
+	convert("tests/500_char.txt", "encoded/500_char_encode.txt", "frequency_table_2.txt")
+
 
