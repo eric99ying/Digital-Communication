@@ -6,12 +6,14 @@ Contains all adjustable parameters in our system.
 
 # Berlekamp-Welch
 N = 129
-K = 100
+K = 64
 P = 131
 
 # Number of bits to group by
 group = 7
 
+# Duration each sound is played
+CHUNK = 2117*2
 
 # Files written to
 input_text_file = "tests/test25.txt"
