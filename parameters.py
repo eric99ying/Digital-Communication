@@ -13,7 +13,7 @@ P = 131
 group = 7
 
 # Duration each sound is played
-CHUNK = 3200
+CHUNK = 2570
 
 # Files written to
 input_text_file = "tests/test25.txt"
