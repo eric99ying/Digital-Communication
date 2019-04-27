@@ -7,7 +7,7 @@ import math
 import parameters
 from scipy.signal import find_peaks
 
-def find_frequency(data):
+def find_frequency(data, CHUNK):
 	data = data * np.hanning(len(data)) #window data
 	fft = abs(np.fft.fft(data).real) #returns some sort of complex array (coefficients are complex valued)
 	fft = fft[:int(len(fft)/2)]
@@ -15,7 +15,7 @@ def find_frequency(data):
 	freq = freq[:int(len(freq)/2)] 
 	freqDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
 	freqSecondDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
-	conc = np.vstack((fft, freq))
+	#conc = np.vstack((fft, freq))
 
 	peaks, _ = find_peaks(fft, prominence=5000)
 	
@@ -76,8 +76,8 @@ def start_frequency(test_freq, frequencies_array):
 
 end_freq = 7750
 end_window = 50
-start_freq = 7000
-start_window = 50
+start_freq = 7500
+start_window = 200
 N = 100
 CHUNK = parameters.CHUNK# number of data points to read at a time
 RATE = 44100
@@ -93,7 +93,7 @@ def main():
 	#print('alignment_time', alignment_time)
 
 	p=pyaudio.PyAudio()
-	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK) #uses default input device
+	stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK//10) #uses default input device
 	freq_list = frequencies_array("frequencies.txt")
 
 	#while time.time() < alignment_time:
@@ -108,54 +108,80 @@ def main():
 	starting_flag = False
 	prev_freq = -1
 	count = 0
+	buffer = np.array([])
+	prev_start = False
+	middle_flag = False
 	#stream.start_stream()
 	while True: 
 		#adjust_time_start = time.time() 
-		data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
-		frequency, second_freq = find_frequency(data)
+		data = np.frombuffer(stream.read(CHUNK//10),dtype=np.int16)
 		
-		if frequency < 1000:
-			frequency = second_freq
-		
-		classified_frequency = classify_freq(frequency, freq_list)
-		
-		
-
-		if classified_frequency == prev_freq:
-			classified_frequency = classify_freq(second_freq, freq_list)
-
-		
-		if abs(frequency - end_freq) < end_window:
-			print("Ending frequency heard")
-			break
-		
-		frequency_array.append(classified_frequency)
-		if starting_flag:
-			classify_array.append(classified_frequency)
-			#print("Raw freq", frequency)
-			"""if (abs(frequency - second_freq) < 40):
-				print(frequency, second_freq)
-				count += 1"""
-
-		if abs(frequency - start_freq) < start_window:
-			if starting_flag == False:
-				print("Starting frequency heard")
+		if starting_flag == False:
+			frequency, second_freq = find_frequency(data, CHUNK//10)
+			#print(frequency)
+			if abs(frequency - start_freq) < start_window:
 				prev_freq = 128
-			starting_flag = True
-		prev_freq = classified_frequency
-		#if (abs(frequency-7000) < 5):
+				if prev_start:
+					starting_flag = True
+					print("Starting frequency heard")
+				prev_start = True
+				count = 1
+			else:
+				prev_start = False
+		elif middle_flag == False:
+			frequency, second_freq = find_frequency(data, CHUNK//10)
+			if frequency > 1300 and frequency < 6970:
+				middle_flag = True
+				buffer = np.append(buffer, data)
+				count = 2
 		
-		#print("actual freq: %d"%frequency)
-		#print("classified freq: %d"%classify_freq(frequency, freq_list))
-
-		#start frequency 
+		elif count != 10:
+			buffer = np.append(buffer, data)
+			count += 1
 		
+		else:
+			buffer = np.concatenate((buffer, data))
+			frequency, second_freq = find_frequency(buffer, CHUNK)
+			if frequency < 1000:
+				frequency = second_freq
+			
+			classified_frequency = classify_freq(frequency, freq_list)
+				
+			
 
-		#adjust_time_end = time.time()
-		#difference = adjust_time_end - adjust_time_start
-		#print(difference)
-		#timeout -=difference
-		#print(data)
+			if classified_frequency == prev_freq:
+				classified_frequency = classify_freq(second_freq, freq_list)
+
+			
+			if abs(frequency - end_freq) < end_window:
+				print("Ending frequency heard")
+				break
+			
+			frequency_array.append(classified_frequency)
+			if starting_flag:
+				classify_array.append(classified_frequency)
+				#print("Raw freq", frequency)
+				"""if (abs(frequency - second_freq) < 40):
+					print(frequency, second_freq)
+					count += 1"""
+
+			
+			prev_freq = classified_frequency
+			#if (abs(frequency-7000) < 5):
+			
+			#print("actual freq: %d"%frequency)
+			#print("classified freq: %d"%classify_freq(frequency, freq_list))
+
+			#start frequency 
+			
+
+			#adjust_time_end = time.time()
+			#difference = adjust_time_end - adjust_time_start
+			#print(difference)
+			#timeout -=difference
+			#print(data)
+			count = 1
+			buffer = np.array([])
 		
 	
 	end_time = time.time()
@@ -172,6 +198,12 @@ def main():
 	output_file = parameters.receive_output		
 
 
+	if(len(classify_array) % parameters.N != 0):
+		if (len(classify_array) % parameters.N > parameters.N/2):
+			zeroes = np.zeros(parameters.N - len(classify_array) % parameters.N)
+			classify_array = np.append(zeroes, classify_array)
+		else:
+			classify_array = classify_array[: - (len(classify_array) % parameters.N)]
 
 	with open(output_file, 'w') as classify_file:
 		for classification in classify_array:
