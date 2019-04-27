@@ -33,7 +33,8 @@ def get_freq_list(low, high, num_points):
 def construct_wav(input_file, low, high, num_points, obj):
 	freq_list = get_freq_list(low,high,num_points)
 	count = 0
-	writeSinWave(7000, obj)
+	writeSinWave(7500, obj)
+	writeSinWave(7500, obj)
 	with open(input_file, "r") as in_file:
 		for line in in_file:
 			b = int(line)
