@@ -5,6 +5,7 @@ import time
 import matplotlib.pyplot as plt
 import math
 import parameters
+from scipy.signal import find_peaks
 
 def find_frequency(data):
 	data = data * np.hanning(len(data)) #window data
@@ -16,13 +17,27 @@ def find_frequency(data):
 	freqSecondDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
 	conc = np.vstack((fft, freq))
 
-	print(conc.shape)
+	peaks, _ = find_peaks(fft, prominence=5000)
+	
+	l = []
+	for peak in peaks:
+		val = fft[peak]
+		hz = abs(freq[peak])
+		l.append( (val,hz) )
+	
+	if len(l) == 0:
+		return freqDominant, 0
+	elif len(l) == 1:
+		l.append( (0,0) )
+	l.sort(reverse=True)
+	
+	freqDominant = l[0][1]
+	freqSecondDominant = l[1][1]
 
-
-	##print(freqSecondDominant, freqDominant)
+	#print(freqSecondDominant, freqDominant)
 	#plot(freq, fft)
 	return freqDominant, freqSecondDominant
- 		
+		
 def plot(freq, fft_coeffs): #freq vs fft coefficients
 	plt.plot(freq,fft_coeffs)
 	plt.axis([0,4000,None,None])
@@ -88,7 +103,7 @@ def main():
 	print('RECORDING STARTED', start_time)	# create a numpy array holding a single read of audio data
 	frequency_array = []
 	classify_array = []
-	#timeout = time.time() + 10  #10 seconds
+	#timeout = time.time() + 10	 #10 seconds
 
 	starting_flag = False
 	prev_freq = -1
@@ -98,7 +113,13 @@ def main():
 		#adjust_time_start = time.time() 
 		data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
 		frequency, second_freq = find_frequency(data)
+		
+		if frequency < 1000:
+			frequency = second_freq
+		
 		classified_frequency = classify_freq(frequency, freq_list)
+		
+		
 
 		if classified_frequency == prev_freq:
 			classified_frequency = classify_freq(second_freq, freq_list)
@@ -134,7 +155,7 @@ def main():
 		#difference = adjust_time_end - adjust_time_start
 		#print(difference)
 		#timeout -=difference
-	    #print(data)
+		#print(data)
 		
 	
 	end_time = time.time()
