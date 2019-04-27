@@ -14,6 +14,11 @@ def find_frequency(data):
 	freq = freq[:int(len(freq)/2)] 
 	freqDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
 	freqSecondDominant = freq[np.where(fft==np.max(fft))[0][0]] + 1
+	conc = np.vstack((fft, freq))
+
+	print(conc.shape)
+
+
 	##print(freqSecondDominant, freqDominant)
 	#plot(freq, fft)
 	return freqDominant, freqSecondDominant
@@ -143,7 +148,7 @@ def main():
 	stream.close()
 	p.terminate()
 
-	output_file = 'classify.txt'
+	output_file = parameters.receive_output		
 
 
 
