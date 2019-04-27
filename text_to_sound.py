@@ -2,7 +2,7 @@ import wave, struct, math, random, os, re
 import parameters
 	
 sampleRate = 44100.0 # hertz
-CHUNK = 2117
+CHUNK = parameters.CHUNK
 end_duration = 44100.0
 def make_wav_obj(sampleRate =sampleRate):
 
@@ -39,6 +39,7 @@ def construct_wav(input_file, low, high, num_points, obj):
 			b = int(line)
 			count += 1
 			writeSinWave(freq_list[b], obj)
+	global CHUNK
 	CHUNK = end_duration
 	writeSinWave(7750, obj)
 	print(count)
