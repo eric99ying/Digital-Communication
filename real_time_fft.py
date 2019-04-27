@@ -4,6 +4,7 @@ import pyaudio
 import time
 import matplotlib.pyplot as plt
 import math
+import parameters
 
 def find_frequency(data):
 	data = data * np.hanning(len(data)) #window data
@@ -16,7 +17,7 @@ def find_frequency(data):
 	##print(freqSecondDominant, freqDominant)
 	#plot(freq, fft)
 	return freqDominant, freqSecondDominant
-
+ 		
 def plot(freq, fft_coeffs): #freq vs fft coefficients
 	plt.plot(freq,fft_coeffs)
 	plt.axis([0,4000,None,None])
@@ -58,7 +59,7 @@ end_window = 50
 start_freq = 7000
 start_window = 50
 N = 100
-CHUNK = 2117 * 2# number of data points to read at a time
+CHUNK = parameters.CHUNK# number of data points to read at a time
 RATE = 44100
 
 def main():

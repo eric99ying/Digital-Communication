@@ -3,7 +3,7 @@ import parameters
 	
 sampleRate = 44100.0 # hertz
 CHUNK = parameters.CHUNK
-end_duration = 44100.0
+end_duration = 44100
 def make_wav_obj(sampleRate =sampleRate):
 
 	obj = wave.open('Transmission/transmission.wav','w')
