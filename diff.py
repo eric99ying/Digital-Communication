@@ -1,5 +1,7 @@
-file_name1 = "received/classify.txt"
-file_name2 = "error_encoded/test25.txt"
+import parameters
+
+file_name1 = parameters.receive_output
+file_name2 = parameters.error_encode_output
 file1 = open(file_name1, 'r')
 file2 = open(file_name2, 'r')
 	
