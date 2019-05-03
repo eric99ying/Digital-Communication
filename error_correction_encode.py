@@ -59,7 +59,7 @@ def split_message(input_file, m):
 		if num_packets_sofar != 0:
 			#print("initial: ", num_packets_sofar)
 			while num_packets_sofar%K != 0:
-				packets.append(32)
+				packets.append(0)
 				num_packets_sofar += 1
 				#print(num_packets_sofar)
 
