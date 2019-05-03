@@ -132,6 +132,10 @@ def decode(input_file, output_file, huffman_tree):
 				#print("found:", tracker.label)
 				output_str += chr(int(tracker.label))
 				tracker = huffman_tree
+		i = len(output_str) - 1
+		while output_str[i] == 'e':
+			output_str = output_str[:i]
+			i -= 1
 		out_file.write(output_str)
 
 	print("Decoded text written to ", output_file)
